@@ -195,7 +195,6 @@ def run_image_augmentation(in_images_path: str, out_images_dir: str = 'augmented
 
         aug_image = img
 
-
         if random.choice([True, False]):
             shift_ratio = random.random() * 0.4 - 0.2  # -0.2 to 0.2 ratio
             aug_image = augmentation_functions(aug_image, 'vertical_shift', shift_ratio)

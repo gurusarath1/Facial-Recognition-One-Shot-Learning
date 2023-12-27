@@ -13,7 +13,7 @@ class cnn_105_encoder(nn.Module):
         self.block2 = self.get_cnn_block(64, 128, 7)
         self.block3 = self.get_cnn_block(128, 128, 4)
         self.block4 = self.get_cnn_block(128, 256, 4, last_block=True)
-        self.flat = nn.Flatten(start_dim=0, end_dim=-1)
+        self.flat = nn.Flatten(start_dim=1, end_dim=-1) # start_dim=1 Do not flatten batch fim
         self.fc1 = nn.Linear(9216, 4096)
         self.act = nn.Sigmoid()
 
@@ -54,7 +54,7 @@ class cnn_80_encoder(nn.Module):
         self.block2 = self.get_cnn_block(64, 128, 7)
         self.block3 = self.get_cnn_block(128, 128, 4)
         self.block4 = self.get_cnn_block(128, 256, 4, last_block=True)
-        self.flat = nn.Flatten(start_dim=0, end_dim=-1)
+        self.flat = nn.Flatten(start_dim=1, end_dim=-1) # start_dim=1 Do not flatten batch fim
         self.fc1 = nn.Linear(1024, 4096)
         self.act = nn.Sigmoid()
 
@@ -93,6 +93,21 @@ class siamese_network(nn.Module):
         self.fc = nn.Linear(4096, 1)
         self.act = nn.Sigmoid()
 
+        # Initialize all layer weights
+        self.apply(self._init_weights)
+    def _init_weights(self, module):
+        if isinstance(module, nn.Conv2d):
+            print(module)
+            module.weight.data.normal_(mean=0.0, std=0.01)
+            if module.bias is not None:
+                module.bias.data.normal_(mean=0.5, std=0.01)
+
+        if isinstance(module, nn.Linear):
+            print(module)
+            module.weight.data.normal_(mean=0.0, std=0.2)
+            if module.bias is not None:
+                module.bias.data.normal_(mean=0.5, std=0.01)
+
     def dist_abs(self, x1, x2):
         return torch.abs(x1 - x2)
 
@@ -114,7 +129,7 @@ if __name__ == '__main__':
 
     net1 = cnn_80_encoder()
 
-    image_in = torch.tensor(torch.zeros(size=(3,80,80)))
+    image_in = torch.tensor(torch.zeros(size=(1,3,80,80)))
 
     out1 = net1(image_in)
 
