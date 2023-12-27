@@ -5,22 +5,30 @@ from face_detection_settings import FRAME_DEFAULT_TEXT_COLOR, FRAME_WARNING_TEXT
     FRAME_DEFAULT_TEXT_FONT, FACE_CASCADE_FILE
 from face_detection_support import init_face_detection, run_face_detection
 from face_recognition_settings import RUN_MODE, COLLECT_FACE_IMAGES_DATA, VERIFY_FACE, USER_FACE_IMAGES_DIR, IMAGE_EXT, \
-    PREPROCESS_TRAIN_IMAGES, RUN_AUGMENTATION
+    PREPROCESS_TRAIN_IMAGES, RUN_AUGMENTATION, TRAIN_LOOP
 from face_recognition_support import extract_1face_image, extract_1face_and_preprocess, process_train_images
 from ml_utils import run_image_augmentation
+from face_recognition_dataset import FaceRecognitionSiameseDataset
 
 if __name__ == '__main__':
+
+    if RUN_MODE == RUN_AUGMENTATION:
+        print('RUN_AUGMENTATION')
+        run_image_augmentation('./user_images',out_images_dir='user_augmented_images')
+        exit()
+
+    if RUN_MODE == TRAIN_LOOP:
+        print('Training Siamese Network .. .. ..')
+        dataset = FaceRecognitionSiameseDataset()
+        print(dataset[0])
+        exit()
+
 
     # initialize face cascade object
     init_face_detection()
 
     if RUN_MODE == PREPROCESS_TRAIN_IMAGES:
         process_train_images()
-        exit()
-
-    if RUN_MODE == RUN_AUGMENTATION:
-        print('RUN_AUGMENTATION')
-        run_image_augmentation('./processed_train_images',out_images_dir='train_augmented_images')
         exit()
 
     # START THE WEB CAM

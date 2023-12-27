@@ -70,7 +70,7 @@ def augmentation_functions(img: np.ndarray, augmentation: str = '', *args) -> np
 
     elif augmentation == 'horizontal_shift':  # -----------------------------
         dir_ratio = args[0]
-
+        print(f'dir_ratio = {dir_ratio}')
         # Check the range
         assert -1 < dir_ratio < 1
 
@@ -110,6 +110,8 @@ def augmentation_functions(img: np.ndarray, augmentation: str = '', *args) -> np
 
     elif augmentation == 'vertical_shift':  # -----------------------------
         dir_ratio = args[0]
+
+        print(f'dir_ratio = {dir_ratio}')
 
         # Check the range
         assert -1 < dir_ratio < 1
@@ -156,7 +158,7 @@ def augmentation_functions(img: np.ndarray, augmentation: str = '', *args) -> np
         if len(args) >= 3:
             pixel_min = args[0]
             pixel_max = args[1]
-            p = args[3]
+            p = args[2]
         elif len(args) == 2:
             pixel_min = args[0]
             pixel_max = args[1]
@@ -191,14 +193,34 @@ def run_image_augmentation(in_images_path: str, out_images_dir: str = 'augmented
         out_image_path = os.path.join(out_images_path, 'aug_' + image_file_name)
         img = cv2.imread(image_path)
 
-        NUM_AUGMENTATIONS = len(augmentations_list)
-        aug_to_perform = random.randint(0, NUM_AUGMENTATIONS - 1)
+        aug_image = img
 
-        aug_image = augmentation_functions(img, 'salt_and_pepper_noise')
+
+        if random.choice([True, False]):
+            shift_ratio = random.random() * 0.4 - 0.2  # -0.2 to 0.2 ratio
+            aug_image = augmentation_functions(aug_image, 'vertical_shift', shift_ratio)
+        elif random.choice([True, False]):
+            shift_ratio = random.random() * 0.4 - 0.2  # -0.2 to 0.2 ratio
+            aug_image = augmentation_functions(aug_image, 'horizontal_shift', shift_ratio)
+        elif random.choice([True, False]):
+            angle = (random.random() * 90) - 45  # -45 to 45 degree
+            aug_image = augmentation_functions(aug_image, 'rotation', angle)
+
+        if random.choice([True, False]):
+            aug_image = augmentation_functions(aug_image, 'horizontal_flip')
+        elif random.choice([True, False]):
+            aug_image = augmentation_functions(aug_image, 'vertical_flip')
+
+        if random.choice([True, False]):
+            beta = random.randint(-100, 100)
+            aug_image = augmentation_functions(aug_image, 'contrast_brightness', 1, beta)
+
+        if random.choice([True, False]):
+            p = random.random() * 0.01
+            aug_image = augmentation_functions(aug_image, 'salt_and_pepper_noise', 0, 255, p)
+
         print(out_image_path)
         cv2.imwrite(out_image_path, aug_image)
-
-        exit()
 
 
 #

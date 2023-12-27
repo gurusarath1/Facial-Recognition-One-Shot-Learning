@@ -1,9 +1,9 @@
 import numpy as np
 import cv2
 import os
-from face_recognition_settings import TRAINING_IMAGE_SIZE, DATASET_DIR, PROCESSED_TRAIN_DATA_DIR, IMAGE_EXT
+from face_recognition_settings import TRAINING_IMAGE_SIZE, DATASET_DIR, PROCESSED_TRAIN_DATA_DIR, IMAGE_EXT, RUN_DEVICE
 from face_detection_support import init_face_detection, run_face_detection
-import uuid
+from torch.utils.data import DataLoader
 
 def extract_1face_and_preprocess(image: np.ndarray, face_bounding_box: tuple, ouput_size: tuple = None) -> np.ndarray:
     image_size = TRAINING_IMAGE_SIZE
@@ -51,3 +51,8 @@ def process_train_images():
             print('Ouput file -- ', output_file_path)
 
             cv2.imwrite(output_file_path, train_image)
+
+
+def train_loop():
+    train_dataloader = DataLoader(training_data, batch_size=64, shuffle=True)
+
