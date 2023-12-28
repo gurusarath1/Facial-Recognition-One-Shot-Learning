@@ -24,7 +24,7 @@ def run_face_detection(cv2_img):
     # Run the face detection algorithm
     faces = face_cascade.detectMultiScale(gray_img, 1.3, 5)
 
-    image_with_boxes = None
+    image_with_boxes = image
     # Draw bounding boxes
     for (x, y, w, h) in faces:
         image_with_boxes = cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)

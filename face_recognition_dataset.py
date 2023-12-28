@@ -37,13 +37,16 @@ class ImagesDataset(Dataset):
 
 class FaceRecognitionSiameseDataset(Dataset):
 
-    def __init__(self, dataset_size=1200, device=RUN_DEVICE):
+    def __init__(self, dataset_size=3500, device=RUN_DEVICE):
         self.device = device
+
+        # image dirs
         self.negative_images_dir = os.path.join(os.getcwd(), FR_DATASET_DIR)
         self.positive_images_dir = os.path.join(os.getcwd(), FR_USER_DATASET_DIR)
         print('Negative Images Dir = ', self.negative_images_dir)
         print('Positive Images Dir = ', self.positive_images_dir)
 
+        # Image files
         self.negative_images = [f for f in os.listdir(self.negative_images_dir) if
                                 os.path.isfile(os.path.join(self.negative_images_dir, f)) and f.endswith(IMAGE_EXT)]
         self.positive_images = [f for f in os.listdir(self.positive_images_dir) if
@@ -55,9 +58,11 @@ class FaceRecognitionSiameseDataset(Dataset):
         print('len positive_images = ', self.num_positive_images)
         print('dataset_size = ', self.dataset_size)
 
-        dataset_flags_true = [True] * int(dataset_size / 2)
-        dataset_flags_false = [False] * int(dataset_size / 2)
+        # Ground truth values
+        dataset_flags_true = [True] * int(dataset_size / 2) # 50 percent of dataset will have matching images (user images)
+        dataset_flags_false = [False] * int(dataset_size / 2) # 50 percentage of dataset will have differnet images
         self.dataset_flags = dataset_flags_true + dataset_flags_false
+
         random.shuffle(self.dataset_flags)
         random.shuffle(self.positive_images)
         random.shuffle(self.negative_images)
@@ -69,20 +74,25 @@ class FaceRecognitionSiameseDataset(Dataset):
 
     def __getitem__(self, idx):
 
+        # Picking two images -----
+
         # Image 1 is a positive image
-        img1_idx = idx #random.randint(0, self.num_positive_images)
+        img1_idx = random.randint(0, self.num_positive_images-1)
         img1_path = os.path.join(self.positive_images_dir, self.positive_images[img1_idx])
 
         # Image 2 is positive or negative based on flag
         if self.dataset_flags[idx]:
-            img2_idx = idx #random.randint(0, self.num_positive_images)
+            # Positive image. img_1 and img_2 are the same class image (user)
+            img2_idx = random.randint(0, self.num_positive_images-1)
             img2_path = os.path.join(self.positive_images_dir, self.positive_images[img2_idx])
-            y = torch.ones(1, dtype=torch.float32, device=RUN_DEVICE)
+            y = torch.ones(1, dtype=torch.float32, device=RUN_DEVICE) # 1
         else:
-            img2_idx = idx #random.randint(0, self.num_negative_images)
+            # Negative image. img_1  and img_2 are different images
+            img2_idx = random.randint(0, self.num_negative_images-1)
             img2_path = os.path.join(self.negative_images_dir, self.negative_images[img2_idx])
-            y = torch.zeros(1, dtype=torch.float32, device=RUN_DEVICE)
+            y = torch.zeros(1, dtype=torch.float32, device=RUN_DEVICE) # 0
 
+        # Convert to tensor images
         img1_tensor = self.apply_image_transforms(Image.open(img1_path)).to(self.device)
         img2_tensor = self.apply_image_transforms(Image.open(img2_path)).to(self.device)
 

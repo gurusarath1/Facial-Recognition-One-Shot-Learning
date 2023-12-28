@@ -211,7 +211,7 @@ def run_image_augmentation(in_images_path: str, out_images_dir: str = 'augmented
             aug_image = augmentation_functions(aug_image, 'vertical_flip')
 
         if random.choice([True, False]):
-            beta = random.randint(-100, 100)
+            beta = random.randint(-30, 100)
             aug_image = augmentation_functions(aug_image, 'contrast_brightness', 1, beta)
 
         if random.choice([True, False]):
@@ -396,14 +396,19 @@ def save_torch_model(model, file_name='saved_model', additional_info='', path='.
         torch.save(model.state_dict(), path + '/' + file_name + '_LATEST_COPY')
 
 
-def load_torch_model(model, file_name='saved_model', path='./saved_models', load_latest=True):
-    if load_latest:
-        model_name = path + '/' + file_name + '_LATEST_COPY'
-    else:
-        model_name = path + '/' + file_name
+def load_torch_model(model, file_name='saved_model', path='saved_models', load_latest=True):
 
-    print(f'Loading Model {model_name} ...')
-    model.load_state_dict(torch.load(model_name))
+    if load_latest:
+        full_path = os.path.join(path, file_name + '_LATEST_COPY')
+    else:
+        full_path = os.path.join(path, file_name)
+
+    if os.path.isfile(full_path):
+        print(f'Loading Model {full_path} ...')
+        model.load_state_dict(torch.load(full_path))
+    else:
+        print('MODEL FILE NOT FOUND .. .. SKIP LOADING ..')
+
 
 
 def get_torch_model_output_size_at_each_layer(model, input_shape=0, input_tensor=None):

@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+# Model in research paper
 class cnn_105_encoder(nn.Module):
 
     def __init__(self):
@@ -42,6 +43,7 @@ class cnn_105_encoder(nn.Module):
             nn.MaxPool2d(kernel_size=(2, 2), stride=2)
         )
 
+# Actual model used in this project
 class cnn_80_encoder(nn.Module):
 
     def __init__(self):
@@ -55,7 +57,7 @@ class cnn_80_encoder(nn.Module):
         self.block3 = self.get_cnn_block(128, 128, 4)
         self.block4 = self.get_cnn_block(128, 256, 4, last_block=True)
         self.flat = nn.Flatten(start_dim=1, end_dim=-1) # start_dim=1 Do not flatten batch fim
-        self.fc1 = nn.Linear(1024, 4096)
+        self.fc1 = nn.Linear(1024, 512)
         self.act = nn.Sigmoid()
 
     def forward(self, x1):
@@ -80,7 +82,8 @@ class cnn_80_encoder(nn.Module):
         return nn.Sequential(
             nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=(2, 2), stride=2)
+            nn.MaxPool2d(kernel_size=(2, 2), stride=2),
+            nn.BatchNorm2d(out_channels),
         )
 
 
@@ -90,8 +93,8 @@ class siamese_network(nn.Module):
         super().__init__()
 
         self.model = model
-        self.fc = nn.Linear(4096, 1)
-        self.act = nn.Sigmoid()
+        self.fc = nn.Linear(512, 1) #unused
+        self.act = nn.Sigmoid() #unused
 
         # Initialize all layer weights
         self.apply(self._init_weights)
@@ -115,14 +118,11 @@ class siamese_network(nn.Module):
         enc_1 = self.model(x1)
         enc_2 = self.model(x2)
 
-        dist = self.dist_abs(enc_1, enc_2)
-        pred = self.act(self.fc(dist))
-
-        return pred
+        return enc_1, enc_2
 
 
 
-
+# Unit testing
 if __name__ == '__main__':
 
     print('Unit testing siamese network .. .. ..')
