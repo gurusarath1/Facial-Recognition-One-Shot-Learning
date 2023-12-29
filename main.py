@@ -5,7 +5,7 @@ from face_detection_settings import FRAME_DEFAULT_TEXT_COLOR, FRAME_WARNING_TEXT
     FRAME_DEFAULT_TEXT_FONT, FACE_CASCADE_FILE
 from face_detection_support import init_face_detection, run_face_detection
 from face_recognition_settings import RUN_MODE, COLLECT_FACE_IMAGES_DATA, VERIFY_FACE, USER_FACE_IMAGES_DIR, IMAGE_EXT, \
-    PREPROCESS_TRAIN_IMAGES, RUN_AUGMENTATION, TRAIN_LOOP, MODEL_SAVE_PATH, RUN_DEVICE, NUM_TEST_IMAGES_TO_VERIFY
+    PREPROCESS_TRAIN_IMAGES, RUN_AUGMENTATION, TRAIN_LOOP, MODEL_SAVE_PATH, RUN_DEVICE, NUM_TEST_IMAGES_TO_VERIFY, TRAINING_IMAGE_SIZE
 from face_recognition_support import extract_1face_and_preprocess, process_train_images, train_loop, mission_mode
 from ml_utils import run_image_augmentation
 from siamese_network_model import cnn_80_encoder, siamese_network
@@ -58,7 +58,8 @@ if __name__ == '__main__':
             cv2.putText(frame_processed, '1', (10, 450), FRAME_DEFAULT_TEXT_FONT, 3, FRAME_DEFAULT_TEXT_COLOR, 2,
                         cv2.LINE_AA)
 
-        if faces[0][2] < 80 or faces[0][3] < 80:
+        # Small image skip
+        if faces[0][2] < TRAINING_IMAGE_SIZE[0] or faces[0][3] < TRAINING_IMAGE_SIZE[0]:
             print('Come closer to the camera !')
             continue
 
