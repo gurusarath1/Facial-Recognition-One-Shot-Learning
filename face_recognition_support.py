@@ -4,7 +4,7 @@ import os
 import torch
 from face_recognition_settings import TRAINING_IMAGE_SIZE, DATASET_DIR, PROCESSED_TRAIN_DATA_DIR, IMAGE_EXT, RUN_DEVICE, \
     BATCH_SIZE, NUM_EPOCHS, MODEL_SAVE_PATH, CONTRASTIVE_LOSS_TRAIN_MARGIN, CONTRASTIVE_LOSS_EVAL_MIN_DIST, \
-    NUM_TEST_IMAGES_TO_VERIFY, EVAL_RATIO_SUCCESS_VOTES
+    NUM_TEST_IMAGES_TO_VERIFY, EVAL_RATIO_SUCCESS_VOTES, USER_VERIFIED, UNKNOWN_USER
 from face_detection_support import run_face_detection
 from torch.utils.data import DataLoader
 from siamese_network_model import cnn_80_encoder, siamese_network
@@ -169,5 +169,7 @@ def mission_mode(in_rgb_numpy_image, siamese_net, user_reference_images):
     # Percentage of votes to win
     if confidence > EVAL_RATIO_SUCCESS_VOTES:
         print('VERDICT - USER VERIFIED !!!')
+        return USER_VERIFIED
     else:
         print('VERDICT - UNKNOWN PERSON')
+        return UNKNOWN_USER
