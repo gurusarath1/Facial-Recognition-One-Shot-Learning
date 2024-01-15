@@ -1,5 +1,5 @@
 # Face-Verification
-#### Siamese Neural Network / 
+#### Siamese Neural Network / Contrastive Loss
 
 <div align="center">
   <a href="https://www.linkedin.com/in/guru-sarath-t-4ab648131/">
