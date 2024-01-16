@@ -12,7 +12,7 @@ I wrote a Python ML code to verify my face. <br>
 > DL Architecture - Siamese Neural Network. <be>
 > Dataset - Faces in the wild  <br>
 > Loss Function - Contrastive Loss <br>
-DL model is trained using contrastive loss to make sure my face mapping is far way from other people's face mapping.  <br>
+Trained the model using the contrastive loss to ensure that the model maps my face images far away from other people's faces.  <br>
 
 ## How to run?
 - [x] Install the required dependencies using ```environment.yml``` file
